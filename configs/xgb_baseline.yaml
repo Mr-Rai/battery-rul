@@ -1,0 +1,32 @@
+# XGBoost Baseline Configuration
+# Modify hyperparameters here — do not hardcode in source files
+
+experiment_name: "battery-rul-xgb-baseline"
+run_name: "xgb-v1"
+
+data:
+  calce_processed_dir: "data/features/calce/"
+  nasa_processed_dir: "data/features/nasa/"
+  test_cells: ["CS2_36", "CS2_37"]          # held out — never seen during training
+  nasa_validation_cells: ["B0007", "B0018"] # cross-dataset generalization
+  sequence_length: 30                        # last N cycles as input window
+
+model:
+  n_estimators: 500
+  max_depth: 6
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  min_child_weight: 3
+  reg_alpha: 0.1       # L1 regularization
+  reg_lambda: 1.0      # L2 regularization
+  early_stopping_rounds: 50
+  eval_metric: "rmse"
+
+training:
+  n_cv_splits: 5       # TimeSeriesSplit folds
+  random_seed: 42
+
+evaluation:
+  early_warning_threshold_cycles: 20
+  cross_dataset_rmse_tolerance: 0.20   # max allowed RMSE increase on NASA vs CALCE test

@@ -1,0 +1,72 @@
+# configs/base.yaml
+# Central config — all pipeline components read from here
+# Override per-experiment by creating configs/exp_<name>.yaml
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  features_dir: data/features
+  calce_series:
+    - CS2
+    - CX2
+  nasa_cells:
+    - B0005
+    - B0006
+    - B0007
+  eol_threshold: 0.80          # End of Life = 80% of rated capacity
+  min_cycles: 50               # Drop cells with fewer cycles than this
+  test_split: 0.20             # Fraction of cells held out for testing
+  random_seed: 42
+
+features:
+  rolling_windows: [5, 10, 20] # Cycle windows for rolling statistics
+  ica_voltage_range: [3.0, 4.2] # Voltage range for dQ/dV computation (V)
+  ica_bins: 1000               # Resolution for ICA curve
+  dva_bins: 1000               # Resolution for DVA curve
+
+training:
+  random_seed: 42
+  cv_folds: 5
+  early_stopping_rounds: 50
+
+xgboost:
+  n_estimators: 1000
+  learning_rate: 0.05
+  max_depth: 6
+  subsample: 0.8
+  colsample_bytree: 0.8
+  reg_alpha: 0.1
+  reg_lambda: 1.0
+  objective: reg:squarederror
+  eval_metric: rmse
+
+tcn:
+  input_size: null             # Set dynamically based on feature count
+  hidden_size: 64
+  num_levels: 4
+  kernel_size: 3
+  dropout: 0.2
+  sequence_length: 30          # Number of past cycles fed as input
+  batch_size: 32
+  epochs: 100
+  learning_rate: 0.001
+  patience: 15                 # Early stopping patience
+
+bayesian:
+  mc_dropout_samples: 100      # Monte Carlo forward passes for uncertainty
+  confidence_level: 0.90       # Target coverage for prediction intervals
+
+serving:
+  host: "0.0.0.0"
+  port: 8000
+  model_path: "mlflow/best_model"
+  sequence_length: 30          # Must match tcn.sequence_length
+
+mlflow:
+  experiment_name: "battery-rul"
+  tracking_uri: "mlflow/"
+
+evaluation:
+  primary_metric: rmse
+  generalization_threshold: 0.20   # Max acceptable RMSE increase on NASA vs CALCE test
+  early_warning_cycles: 20         # Flag cells at least N cycles before EOL

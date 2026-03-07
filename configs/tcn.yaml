@@ -1,0 +1,32 @@
+# TCN Configuration
+
+experiment_name: "battery-rul-tcn"
+run_name: "tcn-v1"
+
+data:
+  calce_processed_dir: "data/features/calce/"
+  nasa_processed_dir: "data/features/nasa/"
+  test_cells: ["CS2_36", "CS2_37"]
+  nasa_validation_cells: ["B0007", "B0018"]
+  sequence_length: 30
+
+model:
+  input_size: 12          # number of features per cycle
+  hidden_size: 64
+  output_size: 1
+  kernel_size: 3
+  num_layers: 6           # dilations: [1, 2, 4, 8, 16, 32] — receptive field = 189 cycles
+  dropout: 0.2
+
+training:
+  batch_size: 32
+  epochs: 200
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  patience: 20            # early stopping
+  random_seed: 42
+  device: "cuda"          # falls back to cpu if unavailable
+
+uncertainty:
+  mc_samples: 100         # stochastic forward passes for MC Dropout
+  confidence_level: 0.90  # target prediction interval coverage
