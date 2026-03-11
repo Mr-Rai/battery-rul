@@ -11,7 +11,7 @@
 - **Conditions:** Room temperature (~25°C), standard charge/discharge profiles
 - **Validation:** NASA PCoE B0005/B0006/B0007 (cross-dataset generalization)
 
-## Performance (to be filled after training)
+## Performance (PENDING TASK)
 | Metric | CALCE Test Set | NASA Validation |
 |--------|---------------|-----------------|
 | RMSE (cycles) | — | — |
