@@ -29,6 +29,7 @@ from typing import Protocol
 
 class RULPredictor(Protocol):
     """Interface that all RUL models must satisfy for the uncertainty wrapper."""
+
     def predict(self, X) -> np.ndarray: ...
 
 
