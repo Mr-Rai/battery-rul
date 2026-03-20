@@ -2,6 +2,7 @@
 data/raw/
 data/processed/
 data/features/
+raw_data/
 
 # MLflow artifacts
 mlflow/mlruns/
